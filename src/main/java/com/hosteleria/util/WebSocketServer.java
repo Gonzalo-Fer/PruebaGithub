@@ -8,11 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Servidor WebSocket embebido (Tyrus + Grizzly).
- *
+ * Servidor WebSocket (EN DESARROLLO).
  * Endpoints registrados:
  *   /chat    → ChatEndpoint           — chat en tiempo real entre empleados
- *   /fichaje → FichajeWifiEndpoint    — fichaje desde app móvil vía WiFi corporativa
+ *   /fichaje → FichajeWifiEndpoint    — fichaje desde app móvil vía WiFi corporativa (CAMBIAR POR PETICIONES HTTP)
  */
 public class WebSocketServer {
 

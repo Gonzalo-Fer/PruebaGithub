@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * (EN DESARROLLO - SIN COMPROBAR LA APP MOVIL AUN SIN DESARROLLAR)
  * Controlador de persistencia para los mensajes de chat.
  * Usado desde ChatEndpoint para guardar y recuperar mensajes.
  */

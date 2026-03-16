@@ -21,7 +21,7 @@ public final class PasswordUtil {
     private PasswordUtil() {}
 
     /**
-     * Genera un hash seguro de la contraseña (incluye salt).
+     * Genera un hash seguro de la contraseña.
      * Formato: base64(salt) + ":" + base64(hash).
      */
     public static String hash(String password) {

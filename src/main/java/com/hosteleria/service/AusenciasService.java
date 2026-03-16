@@ -131,7 +131,9 @@ public class AusenciasService {
             return new ResultadoAusencia(false, "Debes indicar el motivo del rechazo.", null);
         return cambiarEstadoAusencia(idAusencia, EstadoAusencia.rechazado, responsable, motivo);
     }
-
+    /**
+     * Cambia el estado de una ausencia, usado de forma auxiliar para aprobar/rechazar solicitudes.
+     */
     private ResultadoAusencia cambiarEstadoAusencia(int idAusencia, EstadoAusencia nuevoEstado,
                                                     Usuario responsable, String motivo) {
         Session session = null;
@@ -163,7 +165,7 @@ public class AusenciasService {
 
     // ══════════════════════════════════════════════════════════════════
     // BAJA MÉDICA (IT) CON SEGUIMIENTO
-    // ══════════════════════════════════════════════════════════════════
+   
 
     /**
      * Registra el inicio de una baja médica (IT).

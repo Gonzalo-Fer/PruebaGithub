@@ -22,11 +22,8 @@ import java.util.Optional;
  *   · Cálculo automático de horas trabajadas y horas extra
  *   · Detección de retrasos e incidencias
  *   · Alertas de ausencia no justificada
- *   · Cierre automático de fichajes abiertos
+ *   · Cierre de fichajes abiertos
  *
- * Flujo de fichaje WiFi:
- *   App detecta SSID corporativo → WebSocket /fichaje
- *   → FichajeWifiEndpoint → PresenciaService.registrarEntrada() / registrarSalida()
  */
 public class PresenciaService {
 
