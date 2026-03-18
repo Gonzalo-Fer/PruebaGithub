@@ -400,7 +400,7 @@ public class MainUI extends JFrame {
     }
 
     // ══════════════════════════════════════════════════════════════════
-    // NUEVO: PANEL AUSENCIAS Y PERMISOS (card lateral)
+    // PANEL AUSENCIAS Y PERMISOS 
     // ══════════════════════════════════════════════════════════════════
 
     private JPanel crearPanelAusenciasModulo() {
@@ -633,7 +633,7 @@ public class MainUI extends JFrame {
         return tabla("Turnos programados",cols,rows,d.size(),new int[]{40,170,90,70,70,80,140,60,90});
     }
     private JPanel crearPanelFichajes() {
-        List<Fichaje> d=ctrl.getFichajesConEmpleadoYTurno();
+        List<Fichaje> d=ctrl.getFichajesConEmpleadoConTurno();
         String[] cols={"ID","Empleado","Fecha","Entrada","Salida","H.Trabajadas","H.Extra","Retraso(min)","Observaciones"};
         Object[][] rows=new Object[d.size()][cols.length];
         for (int i=0;i<d.size();i++) { Fichaje f=d.get(i);
