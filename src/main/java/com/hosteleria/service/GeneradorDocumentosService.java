@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+// CAMBIAR POR ITEXT7, GENERA DOCUMENTOS DE FORMA MAS SIMPLE
+
 /**
  * Generación de documentos PDF sobre empleados: informes, certificados, resúmenes.
  */

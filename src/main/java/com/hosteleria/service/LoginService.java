@@ -90,7 +90,6 @@ public class LoginService {
         SessionManager.getInstance().cerrarSesion();
     }
 
-    // ── DTOs de resultado ─────────────────────────────────────────────
 
     public static final class ResultadoLogin {
         private final boolean ok;

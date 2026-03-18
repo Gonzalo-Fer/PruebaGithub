@@ -255,7 +255,7 @@ public class PresenciaService {
 
     /**
      * Cierra automáticamente los fichajes que quedaron abiertos al final del día.
-     * Usar en tarea programada nocturna o desde el botón de la UI.
+     * Tambien puede usarse desde un boton en la UI.
      *
      * @param fecha  normalmente LocalDate.now().minusDays(1) (día anterior)
      * @return número de fichajes cerrados
