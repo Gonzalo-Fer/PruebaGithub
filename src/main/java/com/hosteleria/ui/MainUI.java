@@ -207,7 +207,6 @@ public class MainUI extends JFrame {
     
     // CARDS
     
-
     private static final String CARD_EMPLEADOS     = "empleados";
     private static final String CARD_CONTRATACION  = "contratacion";
     private static final String CARD_HORARIOS      = "horarios";
@@ -223,62 +222,27 @@ public class MainUI extends JFrame {
     private String      cardVisible   = CARD_EMPLEADOS;
     private JTabbedPane tabsEmpleados;
     private JTabbedPane tabsHorarios;
-    
-    // ── CACHÉ DE PANELES PARA LAZY LOADING ─────────────────────────────
-    private final java.util.Map<String, JPanel> panelCache = new java.util.HashMap<>();
 
     private JPanel crearCuerpoPrincipal() {
         JPanel cuerpo = new JPanel(new BorderLayout(0, 0));
         cuerpo.setBackground(BG_DARK);
         panelContenido = new JPanel(cardLayout = new CardLayout());
         panelContenido.setBackground(BG_DARK);
-        
-        // ✓ Solo cargar el panel inicial (EMPLEADOS)
-        panelContenido.add(obtenerPanel(CARD_EMPLEADOS),  CARD_EMPLEADOS);
-        
-        // ✗ Los otros paneles se cargarán bajo demanda
-        // Agregar placeholders para lazy loading
-        agregarPlaceholders();
-        
+
+        panelContenido.add(crearPanelEmpleadosModulo(), CARD_EMPLEADOS);
+        panelContenido.add(crearPanelContratacion(), CARD_CONTRATACION);
+        panelContenido.add(crearPanelHorarios(), CARD_HORARIOS);
+        panelContenido.add(crearPanelAusenciasModulo(), CARD_AUSENCIAS);
+        panelContenido.add(crearPanelGrupos(), CARD_GRUPOS);
+        panelContenido.add(crearPanelComunicacion(), CARD_COMUNICACION);
+        panelContenido.add(crearPanelDocumentacion(), CARD_DOCUMENTACION);
+        panelContenido.add(crearPanelEstadisticas(), CARD_ESTADISTICAS);
+        panelContenido.add(crearPanelDatosGenerales(), CARD_DATOS);
+
         cuerpo.add(crearMenuLateral(), BorderLayout.WEST);
-        cuerpo.add(panelContenido,     BorderLayout.CENTER);
-        cardLayout.show(panelContenido, CARD_EMPLEADOS);
+        cuerpo.add(panelContenido, BorderLayout.CENTER);
+        cardLayout.show(panelContenido, cardVisible);
         return cuerpo;
-    }
-    
-    /** Carga o retorna un panel del caché */
-    private JPanel obtenerPanel(String panelId) {
-        if (panelCache.containsKey(panelId)) {
-            return panelCache.get(panelId);
-        }
-        
-        JPanel panel = switch(panelId) {
-            case CARD_EMPLEADOS       -> crearPanelEmpleadosModulo();
-            case CARD_CONTRATACION    -> crearPanelContratacion();
-            case CARD_HORARIOS        -> crearPanelHorarios();
-            case CARD_AUSENCIAS       -> crearPanelAusenciasModulo();
-            case CARD_GRUPOS          -> crearPanelGrupos();
-            case CARD_COMUNICACION    -> crearPanelComunicacion();
-            case CARD_DOCUMENTACION   -> crearPanelDocumentacion();
-            case CARD_ESTADISTICAS    -> crearPanelEstadisticas();
-            case CARD_DATOS           -> crearPanelDatosGenerales();
-            default -> new JPanel();
-        };
-        
-        panelCache.put(panelId, panel);
-        return panel;
-    }
-    
-    /** Agrega placeholders vacíos para que CardLayout los reconozca */
-    private void agregarPlaceholders() {
-        panelContenido.add(new JPanel(), CARD_CONTRATACION);
-        panelContenido.add(new JPanel(), CARD_HORARIOS);
-        panelContenido.add(new JPanel(), CARD_AUSENCIAS);
-        panelContenido.add(new JPanel(), CARD_GRUPOS);
-        panelContenido.add(new JPanel(), CARD_COMUNICACION);
-        panelContenido.add(new JPanel(), CARD_DOCUMENTACION);
-        panelContenido.add(new JPanel(), CARD_ESTADISTICAS);
-        panelContenido.add(new JPanel(), CARD_DATOS);
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -302,15 +266,14 @@ public class MainUI extends JFrame {
         sb.add(Box.createVerticalStrut(14));
         sb.add(sec("Control de presencia", new Object[][]{
                 {"🗓️ Control de presencia",          CARD_HORARIOS,  0},
-                
         }));
         sb.add(Box.createVerticalStrut(14));
-        // ── NUEVO: sección Ausencias y Permisos ───────────────────────
+        
         sb.add(sec("Ausencias y permisos", new Object[][]{
                 {"🏖️ Ausencias y permisos",        CARD_AUSENCIAS, -1}
         }));
         sb.add(Box.createVerticalStrut(14));
-        // ─────────────────────────────────────────────────────────────
+       
         sb.add(sec("Grupos de trabajo", new Object[][]{
                 {"🏢 Áreas", CARD_GRUPOS, -1}
         }));
@@ -368,24 +331,8 @@ public class MainUI extends JFrame {
             if (CARD_HORARIOS.equals(card)     && idx == -11) { abrirIncidencias();         return; }
             if (CARD_AUSENCIAS.equals(card)    && idx == -1)  { abrirAusencias();           return; } // NUEVO
             cardVisible = card;
-            
-            // ✓ LAZY LOADING: Cargar panel bajo demanda
-            if (!panelCache.containsKey(card)) {
-                statusLabel.setForeground(new Color(246,173,85));
-                statusLabel.setText("  ↻ Cargando " + card + "...");
-                SwingUtilities.invokeLater(() -> {
-                    JPanel nuevoPanel = obtenerPanel(card);
-                    panelContenido.remove(panelContenido.getComponentCount() - 1);
-                    panelContenido.add(nuevoPanel, card);
-                    cardLayout.show(panelContenido, card);
-                    panelContenido.revalidate();
-                    statusLabel.setForeground(ACCENT2);
-                    statusLabel.setText("  ● " + card + " cargado");
-                });
-            } else {
-                cardLayout.show(panelContenido, card);
-            }
-            
+            cardLayout.show(panelContenido, card);
+
             if (CARD_EMPLEADOS.equals(card) && tabsEmpleados != null && idx >= 0)
                 tabsEmpleados.setSelectedIndex(idx);
             if (CARD_HORARIOS.equals(card)  && tabsHorarios  != null && idx >= 0)
@@ -865,23 +812,20 @@ public class MainUI extends JFrame {
         statusLabel.setForeground(new Color(246,173,85));
         statusLabel.setText("  ↻ Recargando datos...");
         SwingUtilities.invokeLater(() -> {
-            // ✓ OPTIMIZADO: Solo limpiar caché e invalidar panel visible
-            panelCache.clear();
-            
-            // Recargar solo el panel visible (no todos)
-            String panelActual = cardVisible;
-            JPanel nuevoPanel = obtenerPanel(panelActual);
-            
-            // Remover componente anterior y agregar el nuevo
-            java.awt.Component[] comps = panelContenido.getComponents();
-            for (java.awt.Component comp : comps) {
-                panelContenido.remove(comp);
-            }
-            panelContenido.add(nuevoPanel, panelActual);
-            agregarPlaceholders();
-            
-            cardLayout.show(panelContenido, panelActual);
-            panelContenido.revalidate(); 
+            // Reconstruimos los paneles para que reflejen los datos actualizados.
+            panelContenido.removeAll();
+            panelContenido.add(crearPanelEmpleadosModulo(), CARD_EMPLEADOS);
+            panelContenido.add(crearPanelContratacion(), CARD_CONTRATACION);
+            panelContenido.add(crearPanelHorarios(), CARD_HORARIOS);
+            panelContenido.add(crearPanelAusenciasModulo(), CARD_AUSENCIAS);
+            panelContenido.add(crearPanelGrupos(), CARD_GRUPOS);
+            panelContenido.add(crearPanelComunicacion(), CARD_COMUNICACION);
+            panelContenido.add(crearPanelDocumentacion(), CARD_DOCUMENTACION);
+            panelContenido.add(crearPanelEstadisticas(), CARD_ESTADISTICAS);
+            panelContenido.add(crearPanelDatosGenerales(), CARD_DATOS);
+
+            cardLayout.show(panelContenido, cardVisible);
+            panelContenido.revalidate();
             panelContenido.repaint();
             statusLabel.setForeground(ACCENT2);
             statusLabel.setText("  ● Datos actualizados correctamente");
