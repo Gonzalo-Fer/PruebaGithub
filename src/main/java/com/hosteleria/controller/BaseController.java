@@ -3,6 +3,7 @@ package com.hosteleria.controller;
 import com.hosteleria.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,23 @@ import java.util.Optional;
  * Centraliza el manejo de sesión, transacciones y errores.
  */
 public abstract class BaseController {
+
+    /**
+     * Dato de resultado paginado
+     */
+    public static class PaginatedResult<T> {
+        public List<T> items;
+        public int totalElements;
+        public int totalPages;
+        public int currentPage;
+        
+        public PaginatedResult(List<T> items, int totalElements, int pageSize, int pageNumber) {
+            this.items = items;
+            this.totalElements = totalElements;
+            this.totalPages = (totalElements + pageSize - 1) / pageSize;
+            this.currentPage = pageNumber;
+        }
+    }
 
     /**
      * Ejecuta una HQL sin parámetros y devuelve la lista resultante.
@@ -32,6 +50,47 @@ public abstract class BaseController {
             }
             System.err.println("Error al obtener " + contexto + ": " + e.getMessage());
             return Collections.emptyList();
+        } finally {
+            if (session != null && session.isOpen()) session.close();
+        }
+    }
+
+    /**
+     * Ejecuta una HQL con paginación.
+     * Útil para listados grandes.
+     * 
+     * @param hql Query HQL
+     * @param pageNumber Número de página (empezando en 0)
+     * @param pageSize Tamaño de página (ej: 50)
+     */
+    protected <T> PaginatedResult<T> executeQueryPaginated(String hql, Class<T> clazz, 
+                                                           int pageNumber, int pageSize,
+                                                           String contexto) {
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            
+            // Contar total de elementos
+            String countHql = "SELECT COUNT(*) " + hql.substring(hql.indexOf("FROM"), hql.length());
+            Long totalElements = session.createQuery(countHql, Long.class).uniqueResult();
+            
+            // Ejecutar query con paginación
+            Query<T> query = session.createQuery(hql, clazz);
+            query.setFirstResult(pageNumber * pageSize);
+            query.setMaxResults(pageSize);
+            
+            List<T> resultado = query.list();
+            tx.commit();
+            
+            return new PaginatedResult<>(resultado, totalElements.intValue(), pageSize, pageNumber);
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                try { tx.rollback(); } catch (Exception rb) { /* ignorar */ }
+            }
+            System.err.println("Error al obtener " + contexto + ": " + e.getMessage());
+            return new PaginatedResult<>(Collections.emptyList(), 0, 0, 0);
         } finally {
             if (session != null && session.isOpen()) session.close();
         }

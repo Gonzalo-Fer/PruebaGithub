@@ -25,6 +25,10 @@
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
+        <!-- ✓ CACHÉ INTEGRADO — Sin dependencias externas -->
+        <!-- Para usar query cache, es suficiente con @Cache en las entidades -->
+        <!-- Hibernate 6.x incluye caché de primer nivel automático -->
+
         <!-- Clases mapeadas -->
         <mapping class="com.hosteleria.model.Area"/>
         <mapping class="com.hosteleria.model.Puesto"/>
