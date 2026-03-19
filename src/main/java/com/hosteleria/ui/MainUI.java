@@ -694,9 +694,9 @@ public class MainUI extends JFrame {
                     p.getFecha(),p.getTurno(),p.getImporte()+" €",p.getTipo(),p.getMetodoPago()}; }
         return tabla("Registro de propinas",cols,rows,d.size(),new int[]{40,170,90,80,90,110,110});
     }
-    // ══════════════════════════════════════════════════════════════════
+    
     // MÓDULO EVALUACIÓN — card del sidebar
-    // ══════════════════════════════════════════════════════════════════
+    
 
     private JPanel crearPanelEvaluacionModulo() {
         JPanel p = new JPanel(new BorderLayout(12, 12));
