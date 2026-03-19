@@ -36,6 +36,7 @@ public class MainUI extends JFrame {
     private final EmpleadoGestionService     gestionEmp    = new EmpleadoGestionService();
     private final EstadisticasEmpleadoService estadisticas = new EstadisticasEmpleadoService();
     private final PresenciaService           presencia     = new PresenciaService();
+    private final EvaluacionService          evalService   = new EvaluacionService();
 
     private JLabel statusLabel;
 
@@ -104,6 +105,14 @@ public class MainUI extends JFrame {
     // ── módulo de ausencias ──────────────────────────────
     private void abrirAusencias() {
         new AusenciasDialog(this).setVisible(true);
+    }
+
+    private void abrirEvaluacion() {
+        new EvaluacionDialog(this).setVisible(true);
+    }
+
+    private void abrirInformeRendimiento() {
+        new InformeRendimientoDialog(this).setVisible(true);
     }
 
     private void generarInformeEmpleado() {
@@ -216,6 +225,7 @@ public class MainUI extends JFrame {
     private static final String CARD_DOCUMENTACION = "documentacion";
     private static final String CARD_ESTADISTICAS  = "estadisticas";
     private static final String CARD_DATOS         = "datos";
+    private static final String CARD_EVALUACION    = "evaluacion";
 
     private CardLayout  cardLayout;
     private JPanel      panelContenido;
@@ -238,6 +248,7 @@ public class MainUI extends JFrame {
         panelContenido.add(crearPanelDocumentacion(), CARD_DOCUMENTACION);
         panelContenido.add(crearPanelEstadisticas(), CARD_ESTADISTICAS);
         panelContenido.add(crearPanelDatosGenerales(), CARD_DATOS);
+        panelContenido.add(crearPanelEvaluacionModulo(), CARD_EVALUACION);
 
         cuerpo.add(crearMenuLateral(), BorderLayout.WEST);
         cuerpo.add(panelContenido, BorderLayout.CENTER);
@@ -280,6 +291,11 @@ public class MainUI extends JFrame {
         sb.add(Box.createVerticalStrut(14));
         sb.add(sec("Comunicación", new Object[][]{
                 {"💬 Chat", CARD_COMUNICACION, -1}
+        }));
+        sb.add(Box.createVerticalStrut(14));
+        sb.add(sec("Evaluación del desempeño", new Object[][]{
+                {"⭐ Evaluaciones",            CARD_EVALUACION, -1},
+                {"📊 Informe de rendimiento",  CARD_EVALUACION, -2}
         }));
         sb.add(Box.createVerticalStrut(14));
         sb.add(sec("Documentación", new Object[][]{
@@ -330,6 +346,8 @@ public class MainUI extends JFrame {
             if (CARD_HORARIOS.equals(card)     && idx == -10) { abrirNuevoTurno();          return; }
             if (CARD_HORARIOS.equals(card)     && idx == -11) { abrirIncidencias();         return; }
             if (CARD_AUSENCIAS.equals(card)    && idx == -1)  { abrirAusencias();           return; } // NUEVO
+            if (CARD_EVALUACION.equals(card)   && idx == -1)  { abrirEvaluacion();          return; }
+            if (CARD_EVALUACION.equals(card)   && idx == -2)  { abrirInformeRendimiento();  return; }
             cardVisible = card;
             cardLayout.show(panelContenido, card);
 
@@ -553,6 +571,7 @@ public class MainUI extends JFrame {
         tabs.addTab("💰 Propinas",     crearPanelPropinas());
         tabs.addTab("📄 Nóminas",      crearPanelNominas());
         tabs.addTab("⭐ Evaluaciones", crearPanelEvaluaciones());
+        tabs.addTab("🎯 Objetivos",      crearPanelObjetivosTabla());
         tabs.addTab("🎓 Formación",    crearPanelFormaciones());
         tabs.addTab("🏖️ Ausencias",    crearPanelAusencias());
         tabs.addTab("👤 Usuarios",     crearPanelUsuarios());
@@ -675,6 +694,122 @@ public class MainUI extends JFrame {
                     p.getFecha(),p.getTurno(),p.getImporte()+" €",p.getTipo(),p.getMetodoPago()}; }
         return tabla("Registro de propinas",cols,rows,d.size(),new int[]{40,170,90,80,90,110,110});
     }
+    // ══════════════════════════════════════════════════════════════════
+    // MÓDULO EVALUACIÓN — card del sidebar
+    // ══════════════════════════════════════════════════════════════════
+
+    private JPanel crearPanelEvaluacionModulo() {
+        JPanel p = new JPanel(new BorderLayout(12, 12));
+        p.setBackground(BG_DARK);
+        p.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Título
+        JLabel titulo = new JLabel("⭐ Evaluación del Desempeño");
+        titulo.setFont(new Font("SansSerif", Font.BOLD, 18));
+        titulo.setForeground(TEXT_PRIMARY);
+        p.add(titulo, BorderLayout.NORTH);
+
+        // Tarjetas de acceso rápido
+        JPanel cards = new JPanel(new GridLayout(1, 2, 16, 0));
+        cards.setBackground(BG_DARK);
+
+        cards.add(crearTarjetaAccion(
+            "📝 Nueva evaluación",
+            "Registrar la evaluación de un empleado\npor criterios con puntuación 1-10",
+            ACCENT, e -> abrirEvaluacion()
+        ));
+        cards.add(crearTarjetaAccion(
+            "📊 Informe de rendimiento",
+            "Ranking del equipo, medias por criterio\ny seguimiento de objetivos",
+            new Color(46, 125, 50), e -> abrirInformeRendimiento()
+        ));
+
+        p.add(cards, BorderLayout.CENTER);
+
+        // Resumen rápido: últimas evaluaciones
+        JPanel resumen = new JPanel(new BorderLayout(0, 6));
+        resumen.setBackground(BG_PANEL);
+        resumen.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR),
+            BorderFactory.createEmptyBorder(12, 14, 12, 14)));
+
+        JLabel lblUlt = new JLabel("Últimas 5 evaluaciones completadas");
+        lblUlt.setFont(new Font("SansSerif", Font.BOLD, 12));
+        resumen.add(lblUlt, BorderLayout.NORTH);
+
+        String[] cols = {"Empleado", "Evaluador", "Fecha", "Periodo", "Puntuación"};
+        DefaultTableModel mdl = new DefaultTableModel(cols, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        JTable tbl = new JTable(mdl);
+        tbl.setRowHeight(22);
+        tbl.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        tbl.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 11));
+        tbl.setGridColor(BORDER_COLOR);
+        tbl.setSelectionBackground(ROW_HOVER);
+        tbl.setFillsViewportHeight(true);
+
+        ctrl.evaluacion().getAllEvaluaciones().stream()
+            .filter(ev -> ev.getEstado() != com.hosteleria.model.Evaluacion.EstadoEvaluacion.borrador)
+            .limit(5)
+            .forEach(ev -> mdl.addRow(new Object[]{
+                ev.getEmpleado().getNombre() + " " + ev.getEmpleado().getApellidos(),
+                ev.getEvaluador().getNombre() + " " + ev.getEvaluador().getApellidos(),
+                ev.getFecha() != null ? ev.getFecha() : "—",
+                ev.getPeriodo() != null ? ev.getPeriodo() : "—",
+                ev.getPuntuacionTotal() != null ? ev.getPuntuacionTotal() + " / 100" : "—"
+            }));
+
+        resumen.add(new JScrollPane(tbl), BorderLayout.CENTER);
+        p.add(resumen, BorderLayout.SOUTH);
+        return p;
+    }
+
+    private JPanel crearTarjetaAccion(String titulo, String desc, Color color,
+                                       java.awt.event.ActionListener action) {
+        JPanel card = new JPanel(new BorderLayout(0, 10));
+        card.setBackground(BG_PANEL);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR),
+            BorderFactory.createEmptyBorder(18, 18, 18, 18)));
+
+        JLabel lTit = new JLabel(titulo);
+        lTit.setFont(new Font("SansSerif", Font.BOLD, 14));
+        lTit.setForeground(color);
+        card.add(lTit, BorderLayout.NORTH);
+
+        JLabel lDesc = new JLabel("<html>" + desc.replace("\n", "<br>") + "</html>");
+        lDesc.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        lDesc.setForeground(TEXT_MUTED);
+        card.add(lDesc, BorderLayout.CENTER);
+
+        JButton btn = boton("Abrir →", color);
+        btn.addActionListener(action);
+        card.add(btn, BorderLayout.SOUTH);
+        return card;
+    }
+
+    /** Tabla de objetivos para la pestaña "Datos generales" - Desarrollo */
+    
+    private JPanel crearPanelObjetivosTabla() {
+        List<com.hosteleria.model.Objetivo> d = ctrl.evaluacion().getObjetivosActivos();
+        String[] cols = {"ID", "Empleado", "Título", "F. Límite", "Progreso", "Estado"};
+        Object[][] rows = new Object[d.size()][cols.length];
+        for (int i = 0; i < d.size(); i++) {
+            com.hosteleria.model.Objetivo o = d.get(i);
+            rows[i] = new Object[]{
+                o.getIdObjetivo(),
+                o.getEmpleado().getNombre() + " " + o.getEmpleado().getApellidos(),
+                o.getTitulo(),
+                o.getFechaLimite() != null ? o.getFechaLimite() : "Sin límite",
+                (o.getProgreso() != null ? o.getProgreso() : 0) + "%",
+                o.getEstado() != null ? o.getEstado().name() : "—"
+            };
+        }
+        return tabla("Objetivos activos", cols, rows, d.size(),
+                     new int[]{40, 160, 260, 90, 80, 100});
+    }
+
     private JPanel crearPanelNominas() {
         List<Nomina> d=ctrl.getNominasConEmpleado();
         String[] cols={"ID","Empleado","Mes","Año","S.Base","H.Extra","Propinas","S.Social","IRPF","Neto","Estado"};

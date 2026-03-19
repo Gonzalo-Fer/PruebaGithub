@@ -33,10 +33,8 @@ public class AusenciasService {
 
     private final HosteleriaController ctrl = new HosteleriaController();
 
-    // ══════════════════════════════════════════════════════════════════
     // SOLICITUD DE VACACIONES / PERMISO
-    // ══════════════════════════════════════════════════════════════════
-
+    
     /**
      * El empleado solicita una ausencia (vacaciones, permiso retribuido,
      * permiso no retribuido...).
@@ -112,9 +110,9 @@ public class AusenciasService {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
+   
     // APROBACIÓN / RECHAZO POR EL RESPONSABLE
-    // ══════════════════════════════════════════════════════════════════
+
 
     /**
      * El responsable aprueba una solicitud de ausencia.
@@ -163,8 +161,8 @@ public class AusenciasService {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // BAJA MÉDICA (IT) CON SEGUIMIENTO
+    
+    // BAJAS MÉDICAS (IT) CON SEGUIMIENTO
    
 
     /**
@@ -244,9 +242,9 @@ public class AusenciasService {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // CALENDARIO DE AUSENCIAS
-    // ══════════════════════════════════════════════════════════════════
+    
 
     /**
      * Devuelve todas las ausencias aprobadas / en seguimiento entre dos fechas.
@@ -278,9 +276,9 @@ public class AusenciasService {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
+   
     // CONTROL DE DÍAS DISPONIBLES
-    // ══════════════════════════════════════════════════════════════════
+    
 
     /**
      * Días de vacaciones ya usados (aprobados) por un empleado en un año.
@@ -326,9 +324,9 @@ public class AusenciasService {
         );
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // UTILIDADES PRIVADAS
-    // ══════════════════════════════════════════════════════════════════
+    
 
     /** Calcula días hábiles (lun-vie) entre dos fechas, ambas inclusive. */
     private int calcularDiasHabiles(LocalDate inicio, LocalDate fin) {
@@ -342,7 +340,7 @@ public class AusenciasService {
         return dias;
     }
 
-    /** Determina si el tipo de ausencia es retribuido por defecto. */
+    /** Determina si el tipo de ausencia es retribuido, por defecto lo es. */
     private boolean esRetribuido(TipoAusencia tipo) {
         return switch (tipo) {
             case vacaciones, baja_medica, permiso_retribuido,
@@ -352,9 +350,9 @@ public class AusenciasService {
         };
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // DTOs DE RESULTADO
-    // ══════════════════════════════════════════════════════════════════
+    
 
     public static class ResultadoAusencia {
         public final boolean ok;

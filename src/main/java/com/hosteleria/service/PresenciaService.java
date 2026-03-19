@@ -235,9 +235,9 @@ public class PresenciaService {
             : Resultado.error("Error al actualizar el fichaje.");
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // ALERTAS Y AUSENCIAS NO JUSTIFICADAS
-    // ══════════════════════════════════════════════════════════════════
+   
 
     /**
      * Devuelve los turnos del día que no tienen fichaje de entrada.
@@ -277,9 +277,9 @@ public class PresenciaService {
         return cerrados;
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // RESUMEN DE HORAS (para la UI)
-    // ══════════════════════════════════════════════════════════════════
+  
 
     public ResumenHoras getResumenHoras(int idEmpleado, LocalDate desde, LocalDate hasta) {
         List<Fichaje> fs = ctrl.getFichajesPorEmpleadoYRango(idEmpleado, desde, hasta);
@@ -295,18 +295,18 @@ public class PresenciaService {
                                 retrasoMin, (int) conRetraso, fs.size());
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // HELPER PRIVADO
-    // ══════════════════════════════════════════════════════════════════
+    
 
     private static BigDecimal minutosAHoras(long minutos) {
         return BigDecimal.valueOf(minutos)
                          .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
     }
 
-    // ══════════════════════════════════════════════════════════════════
+    
     // DTOs DE RESULTADO
-    // ══════════════════════════════════════════════════════════════════
+
 
     public static final class Resultado {
         public final boolean ok;

@@ -28,7 +28,8 @@ public class HosteleriaController {
     private final AusenciaController  ausencias  = new AusenciaController();
     private final NominaController    nominas    = new NominaController();
     private final FormacionController formacion  = new FormacionController();
-    private final UsuarioController   usuarios   = new UsuarioController();
+    private final UsuarioController   usuarios    = new UsuarioController();
+    private final EvaluacionController evaluacion  = new EvaluacionController();
 
     // ── Acceso directo a controladores especializados ─────────────────
     public EmpleadoController  empleados()  { return empleados; }
@@ -36,7 +37,8 @@ public class HosteleriaController {
     public AusenciaController  ausencias()  { return ausencias; }
     public NominaController    nominas()    { return nominas; }
     public FormacionController formacion()  { return formacion; }
-    public UsuarioController   usuarios()   { return usuarios; }
+    public UsuarioController    usuarios()    { return usuarios; }
+    public EvaluacionController evaluacion()  { return evaluacion; }
 
     // ÁREAS
     public List<Area>            getAllAreas()                          { return empleados.getAllAreas(); }

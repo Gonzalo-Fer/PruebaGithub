@@ -2,6 +2,7 @@ package com.hosteleria.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "evaluaciones")
@@ -47,6 +48,15 @@ public class Evaluacion {
     @Column(name = "comentarios", columnDefinition = "TEXT")
     private String comentarios;
 
+    /** Ciclo de vida: borrador → completada → revisada */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado")
+    private EstadoEvaluacion estado = EstadoEvaluacion.borrador;
+
+    /** Objetivos vinculados / revisados en esta evaluación */
+    @OneToMany(mappedBy = "evaluacion", fetch = FetchType.LAZY)
+    private List<Objetivo> objetivos;
+
     public Evaluacion() {}
 
     public Integer getIdEvaluacion() { return idEvaluacion; }
@@ -84,4 +94,12 @@ public class Evaluacion {
 
     public String getComentarios() { return comentarios; }
     public void setComentarios(String comentarios) { this.comentarios = comentarios; }
+
+    public EstadoEvaluacion getEstado() { return estado; }
+    public void setEstado(EstadoEvaluacion estado) { this.estado = estado; }
+
+    public List<Objetivo> getObjetivos() { return objetivos; }
+    public void setObjetivos(List<Objetivo> objetivos) { this.objetivos = objetivos; }
+
+    public enum EstadoEvaluacion { borrador, completada, revisada }
 }

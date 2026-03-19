@@ -5,6 +5,7 @@ import com.hosteleria.model.Empleado;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 
+import com.hosteleria.service.EvaluacionService;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -138,6 +139,84 @@ public class GeneradorDocumentosService {
             }
             doc.add(new Paragraph(" "));
             doc.add(new Paragraph("Documento generado el " + LocalDate.now().format(FMT) + ".", new Font(Font.HELVETICA, 9, Font.ITALIC)));
+            doc.close();
+        }
+        return ruta;
+    }
+
+    /**
+     * Genera un informe PDF de rendimiento del equipo en un periodo.
+     * Incluye ranking de empleados, medias por criterio y resumen de objetivos.
+     */
+    public Path generarInformeRendimiento(LocalDate desde, LocalDate hasta, Path directorioSalida)
+            throws IOException, DocumentException {
+
+        EvaluacionService svc = new EvaluacionService();
+        EvaluacionService.InformeEquipoDTO informe = svc.informeEquipo(desde, hasta);
+
+        String nombreArchivo = "rendimiento_equipo_"
+                + LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".pdf";
+        Path ruta = directorioSalida.resolve(nombreArchivo);
+
+        try (FileOutputStream fos = new FileOutputStream(ruta.toFile())) {
+            Document doc = new Document(PageSize.A4, 50, 50, 50, 50);
+            PdfWriter.getInstance(doc, fos);
+            doc.open();
+
+            // ── Cabecera ────────────────────────────────────────────
+            doc.add(new Paragraph("INFORME DE RENDIMIENTO DEL EQUIPO", FONT_TITULO));
+            doc.add(new Paragraph("Periodo: " + desde.format(FMT) + " — " + hasta.format(FMT), FONT_NORMAL));
+            doc.add(new Paragraph(" "));
+
+            if (informe.getFilas().isEmpty()) {
+                doc.add(new Paragraph("No hay evaluaciones completadas en el periodo indicado.", FONT_NORMAL));
+                doc.close();
+                return ruta;
+            }
+
+            // ── Resumen global ──────────────────────────────────────
+            doc.add(new Paragraph("Resumen global", FONT_SUBTITULO));
+            doc.add(new Paragraph(
+                "Empleados evaluados: " + informe.getFilas().size()
+                + "   |   Media global del equipo: "
+                + String.format("%.1f", informe.getMediaGlobalEquipo()) + " / 100",
+                FONT_NORMAL));
+            doc.add(new Paragraph(" "));
+
+            // ── Tabla de ranking ────────────────────────────────────
+            doc.add(new Paragraph("Ranking de rendimiento (mayor a menor puntuación)", FONT_SUBTITULO));
+            doc.add(new Paragraph(" "));
+
+            // Cabecera de tabla manual
+            Font fBold   = new Font(Font.HELVETICA, 10, Font.BOLD);
+            Font fNormal = new Font(Font.HELVETICA, 10, Font.NORMAL);
+
+            int pos = 1;
+            for (EvaluacionService.ResumenEmpleadoDTO f : informe.getFilas()) {
+                String linea = String.format(
+                    "#%d  %-30s  Media: %5.1f/100  |  Puntualidad: %.1f  Atención: %.1f"
+                    + "  Equipo: %.1f  Producto: %.1f  Higiene: %.1f"
+                    + "  |  Objetivos: %d/%d (%.0f%%)",
+                    pos++,
+                    f.getNombreEmpleado() != null ? f.getNombreEmpleado() : "—",
+                    f.getMediaGeneral(),
+                    f.getMediaPuntualidad(),
+                    f.getMediaAtencionCliente(),
+                    f.getMediaTrabajoEquipo(),
+                    f.getMediaConocimientoProducto(),
+                    f.getMediaHigienePresentacion(),
+                    f.getObjetivosCompletados(),
+                    f.getObjetivosTotales(),
+                    f.getPorcentajeObjetivos()
+                );
+                doc.add(new Paragraph(linea, fNormal));
+                doc.add(new Paragraph(" "));
+            }
+
+            doc.add(new Paragraph(" "));
+            doc.add(new Paragraph(
+                "Documento generado el " + LocalDate.now().format(FMT) + ".",
+                new Font(Font.HELVETICA, 9, Font.ITALIC)));
             doc.close();
         }
         return ruta;

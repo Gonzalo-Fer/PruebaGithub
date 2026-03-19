@@ -150,6 +150,8 @@ public class EmpleadoGestionService {
         return ctrl.getEmpleadoCompleto(id);
     }
 
+    // Clases de resultado para altas y bajas, con mensajes de error si no se pudo realizar la operación.
+
     public static final class ResultadoAlta {
         private final boolean ok;
         private final String mensajeError;

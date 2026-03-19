@@ -44,5 +44,6 @@
         <mapping class="com.hosteleria.model.Usuario"/>
         <mapping class="com.hosteleria.model.HistorialLaboral"/>
         <mapping class="com.hosteleria.model.Contrato"/>
+        <mapping class="com.hosteleria.model.Objetivo"/>
     </session-factory>
 </hibernate-configuration>
