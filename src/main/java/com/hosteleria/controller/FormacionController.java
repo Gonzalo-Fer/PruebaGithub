@@ -15,9 +15,8 @@ import java.util.List;
  */
 public class FormacionController extends BaseController {
 
-    // ══════════════════════════════════════════════════════
     // FORMACIÓN
-    // ══════════════════════════════════════════════════════
+    
 
     /** SELECT * FROM formacion */
     public List<Formacion> getAllFormaciones() {
@@ -93,9 +92,9 @@ public class FormacionController extends BaseController {
         return fusionar(formacion, "formación");
     }
 
-    // ══════════════════════════════════════════════════════
+    
     // EVALUACIONES
-    // ══════════════════════════════════════════════════════
+
 
     /** SELECT * FROM evaluaciones */
     public List<Evaluacion> getAllEvaluaciones() {

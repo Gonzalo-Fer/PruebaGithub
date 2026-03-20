@@ -200,9 +200,7 @@ public class TurnoController extends BaseController {
         }
     }
 
-    // ══════════════════════════════════════════════════════
     // FICHAJES
-    // ══════════════════════════════════════════════════════
 
     /** SELECT * FROM fichajes */
     public List<Fichaje> getAllFichajes() {

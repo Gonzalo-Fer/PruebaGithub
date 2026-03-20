@@ -38,7 +38,7 @@ public class LoginService {
     }
 
     /**
-     * Registra un nuevo usuario (una vez registrado un administrador debe permitir el acceso).
+     * Registra un nuevo usuario (una vez registrado un administrador debe permitir el acceso a la versión de PC).
      * El username y email deben ser únicos.
      */
     public ResultadoRegistro registrar(String nombre, String username, String email, String password,

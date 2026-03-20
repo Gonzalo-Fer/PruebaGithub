@@ -114,9 +114,7 @@ public class PresenciaService {
         return ctrl.getTurnosPorRangoConEmpleado(ini, ini.withDayOfMonth(ini.lengthOfMonth()));
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FICHAJE VÍA WIFI (llamado desde FichajeWifiEndpoint)
-    // ══════════════════════════════════════════════════════════════════
+    // FICHAJE VÍA WIFI (SIN USO, SE VA A REALIZAR MEDIANTE API Y PETICIONES HTTP - REALIZAR COMPROBACIONES PARA ELIMINARLO DE LA APLICACIÓN) 
 
     /**
      * Registra la ENTRADA de un empleado.

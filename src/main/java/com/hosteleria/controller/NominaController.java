@@ -14,9 +14,7 @@ import java.util.List;
  */
 public class NominaController extends BaseController {
 
-    // ══════════════════════════════════════════════════════
     // NÓMINAS
-    // ══════════════════════════════════════════════════════
 
     /** SELECT * FROM nominas */
     public List<Nomina> getAllNominas() {
@@ -93,9 +91,9 @@ public class NominaController extends BaseController {
         return fusionar(nomina, "nómina");
     }
 
-    // ══════════════════════════════════════════════════════
+     
     // PROPINAS
-    // ══════════════════════════════════════════════════════
+    
 
     /** SELECT * FROM propinas */
     public List<Propina> getAllPropinas() {
