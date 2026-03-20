@@ -97,9 +97,7 @@ public class EvaluacionService {
                   : ResultadoEvaluacion.error("No se pudo actualizar el progreso.");
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // INFORMES
-    // ══════════════════════════════════════════════════════════════════
 
     /**
      * Resumen de rendimiento de un empleado concreto en un periodo.
@@ -215,9 +213,7 @@ public class EvaluacionService {
             .orElse(0.0);
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // DTOs
-    // ══════════════════════════════════════════════════════════════════
 
     public static class ResultadoEvaluacion {
         private final boolean exito;

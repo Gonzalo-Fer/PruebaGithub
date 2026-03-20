@@ -40,6 +40,8 @@ public final class SessionManager {
         return inicioSesion;
     }
 
+    // Metodos de control de sesiones, permisos y roles
+
     /** Comprueba si el usuario actual tiene rol ADMIN o GERENTE. */
     public boolean esAdminOGerente() {
         return usuarioActual != null
